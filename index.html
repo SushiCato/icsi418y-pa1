@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Manager</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 20px;
+        background: #f4f6f8;
+        color: #333;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      label {
+        font-weight: bold;
+      }
+
+      input,
+      select,
+      button {
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+      }
+
+      button {
+        cursor: pointer;
+        background: #007bff;
+        color: white;
+        border: none;
+      }
+
+      #task-list {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .task-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        background: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .task-main {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+      }
+
+      .task-name {
+        font-size: 1rem;
+      }
+
+      .task-item.completed .task-name {
+        text-decoration: line-through;
+        color: #777;
+      }
+
+      .task-priority {
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: bold;
+        text-transform: capitalize;
+      }
+
+      .priority-low {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .priority-medium {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      .priority-high {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .delete-task {
+        background: #dc3545;
+      }
+    </style>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <h1>My Task List</h1>
+
+    <form id="task-form">
+      <label for="task-input">Task:</label>
+      <input id="task-input" type="text" placeholder="Enter a task" required />
+
+      <label for="priority">Priority:</label>
+      <select id="priority" aria-label="Priority">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+
+      <button type="submit">Add Task</button>
+    </form>
+
+    <div id="task-list" aria-live="polite"></div>
+
+    <script src="script.js" defer></script>
+    <script>
+      const taskForm = document.getElementById('task-form');
+      const taskInput = document.getElementById('task-input');
+      const prioritySelect = document.getElementById('priority');
+      const taskList = document.getElementById('task-list');
+
+      taskForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const taskName = taskInput.value.trim();
+        if (!taskName) {
+          return;
+        }
+
+        const taskItem = document.createElement('div');
+        taskItem.className = 'task-item';
+
+        const taskMain = document.createElement('div');
+        taskMain.className = 'task-main';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.setAttribute('aria-label', 'Mark task as completed');
+
+        const taskText = document.createElement('span');
+        taskText.className = 'task-name';
+        taskText.textContent = taskName;
+
+        const priorityValue = prioritySelect.value;
+        const priorityLabel = prioritySelect.options[prioritySelect.selectedIndex].text;
+
+        const priorityBadge = document.createElement('span');
+        priorityBadge.className = `task-priority priority-${priorityValue}`;
+        priorityBadge.textContent = priorityLabel;
+
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.className = 'delete-task';
+        deleteButton.textContent = 'Delete';
+
+        taskMain.appendChild(checkbox);
+        taskMain.appendChild(taskText);
+
+        taskItem.appendChild(taskMain);
+        taskItem.appendChild(priorityBadge);
+        taskItem.appendChild(deleteButton);
+
+        checkbox.addEventListener('change', function () {
+          taskItem.classList.toggle('completed', checkbox.checked);
+        });
+
+        deleteButton.addEventListener('click', function () {
+          taskItem.remove();
+        });
+
+        taskList.appendChild(taskItem);
+        taskForm.reset();
+        taskInput.focus();
+      });
+    </script>
+  </body>
+</html>
